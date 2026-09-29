@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="th" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบประเมินออนไลน์ PA 2 - นางสาวสุธิมา รณภพรัตนกุล (พ.ศ. 2569)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts: Sarabun & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        terracotta: '#C85A32',
+                        'terracotta-dark': '#A64622',
+                        sage: '#8A9A86',
+                        'sage-dark': '#6B7A68',
+                        cream: '#F9F8F5',
+                        'cream-dark': '#EFECE6',
+                        charcoal: '#2D3132',
+                    },
+                    fontFamily: {
+                        sans: ['Sarabun', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .print-shadow { box-shadow: none !important; border: 1px solid #ccc !important; }
+        }
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #F9F8F5;
+            color: #2D3132;
+        }
+    </style>
+</head>
+<body class="min-h-full flex flex-col">
+
+    <!-- Header with Branding -->
+    <header class="bg-charcoal text-cream shadow-md no-print sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-4">
+                <!-- Logos -->
+                <div class="flex items-center space-x-2">
+                    <img src="https://placehold.co/50x50/8A9A86/FFFFFF?text=สพฐ" alt="ตรา สพฐ" class="w-12 h-12 rounded-full object-cover shadow border border-sage">
+                    <img src="https://placehold.co/50x50/C85A32/FFFFFF?text=รร" alt="ตราโรงเรียนบ้านทุ่งนาวิทยา" class="w-12 h-12 rounded-full object-cover shadow border border-terracotta">
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold tracking-wide">ระบบประเมิน PA 2 ออนไลน์</h1>
+                    <p class="text-xs text-sage font-medium">โรงเรียนบ้านทุ่งนาวิทยา สพป.อุทัยธานี เขต 2 | ปีงบประมาณ 2569</p>
+                </div>
+            </div>
+
+            <!-- Evaluator Switcher Bar -->
+            <div class="flex items-center bg-cream-dark/20 p-2 rounded-xl border border-sage/30 flex-wrap gap-2">
+                <span class="text-xs font-semibold text-sage uppercase tracking-wider px-2"><i class="fa-solid fa-user-shield mr-1"></i> กรรมการผู้ประเมิน:</span>
+                <select id="evaluatorSelect" onchange="switchEvaluator(this.value)" class="bg-charcoal text-cream text-sm font-medium px-3 py-1.5 rounded-lg border border-sage/50 focus:outline-none focus:ring-2 focus:ring-terracotta">
+                    <option value="1">1. นายเอกชัย ไชยประยา (ผอ.รร.บ้านทุ่งนาวิทยา)</option>
+                    <option value="2">2. นายศราวุฒิ จำรัสภูมิ (ผอ.รร.สมอทองปทีปพลีผลอุปถัมภ์)</option>
+                    <option value="3">3. นายชยพล สอนซิว (ผอ.รร.ห้วยคตพิทยาคม)</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- Profile Banner -->
+    <section class="bg-sage/10 border-b border-sage/20 py-4 px-4 no-print">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 rounded-2xl bg-terracotta/20 flex items-center justify-center text-terracotta text-2xl font-bold shadow-inner">
+                    <i class="fa-solid fa-user-tie"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-charcoal">นางสาวสุธิมา รณภพรัตนกุล</h2>
+                    <p class="text-sm text-gray-600">ตำแหน่ง รองผู้อำนวยการสถานศึกษา วิทยฐานะชำนาญการพิเศษ | โรงเรียนบ้านทุ่งนาวิทยา</p>
+                    <p class="text-xs text-terracotta font-semibold mt-0.5"><i class="fa-regular fa-calendar-days mr-1"></i> รอบการประเมิน: 1 ตุลาคม 2568 - 30 กันยายน 2569 (ปีงบประมาณ 2569)</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="saveAllData()" class="px-4 py-2 bg-sage hover:bg-sage-dark text-white text-sm font-semibold rounded-xl shadow transition flex items-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูล
+                </button>
+                <button onclick="resetData()" class="px-3 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-semibold rounded-xl transition" title="รีเซ็ตข้อมูลทั้งหมด">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-white border-b border-gray-200 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-4 flex space-x-1 sm:space-x-4 overflow-x-auto">
+            <button onclick="switchTab('info')" id="tab-btn-info" class="tab-btn py-3 px-4 border-b-2 font-medium text-sm transition whitespace-nowrap text-terracotta border-terracotta">
+                <i class="fa-solid fa-circle-info mr-1.5"></i> ข้อมูลทั่วไป & เกณฑ์
+            </button>
+            <button onclick="switchTab('part1')" id="tab-btn-part1" class="tab-btn py-3 px-4 border-b-2 font-medium text-sm transition whitespace-nowrap text-gray-500 border-transparent hover:text-charcoal">
+                <i class="fa-solid fa-list-check mr-1.5"></i> ส่วนที่ 1: มาตรฐานตำแหน่ง (60 คะแนน)
+            </button>
+            <button onclick="switchTab('part2')" id="tab-btn-part2" class="tab-btn py-3 px-4 border-b-2 font-medium text-sm transition whitespace-nowrap text-gray-500 border-transparent hover:text-charcoal">
+                <i class="fa-solid fa-bullseye mr-1.5"></i> ส่วนที่ 2: ประเด็นท้าทาย (40 คะแนน)
+            </button>
+            <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-btn py-3 px-4 border-b-2 font-medium text-sm transition whitespace-nowrap text-gray-500 border-transparent hover:text-charcoal">
+                <i class="fa-solid fa-chart-pie mr-1.5"></i> Dashboard สรุปผล (3 กรรมการ)
+            </button>
+            <button onclick="switchTab('report')" id="tab-btn-report" class="tab-btn py-3 px-4 border-b-2 font-medium text-sm transition whitespace-nowrap text-gray-500 border-transparent hover:text-charcoal">
+                <i class="fa-solid fa-file-contract mr-1.5"></i> แบบรายงานทางการ (PA 2)
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6">
+
+        <!-- TAB 1: GENERAL INFO & CRITERIA -->
+        <div id="tab-content-info" class="tab-content space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <h3 class="text-xl font-bold text-charcoal mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-terracotta"></i> รายละเอียดข้อตกลงในการพัฒนางาน (PA) ประจำปีงบประมาณ 2569
+                </h3>
+                <p class="text-gray-600 mb-6 leading-relaxed">
+                    ระบบประเมินผลการปฏิบัติงานตามข้อตกลงในการพัฒนางาน (Performance Agreement: PA) สำหรับข้าราชการครูและบุคลากรทางการศึกษา ตำแหน่งรองผู้อำนวยการสถานศึกษา วิทยฐานะชำนาญการพิเศษ ประจำปีงบประมาณ พ.ศ. 2569 มีโครงสร้างการประเมินแบ่งเป็น 2 ส่วนหลัก รวม 100 คะแนน ดังนี้
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-cream p-6 rounded-2xl border border-sage/30">
+                        <span class="text-xs font-bold px-2.5 py-1 bg-terracotta text-white rounded-full">ส่วนที่ 1</span>
+                        <h4 class="text-lg font-bold text-charcoal mt-3 mb-2">ข้อตกลงในการพัฒนางานตามมาตรฐานตำแหน่ง (60 คะแนน)</h4>
+                        <p class="text-sm text-gray-600 mb-4">ประกอบด้วย 5 ด้าน (15 ตัวชี้วัดย่อย) ประเมินตามสภาพการปฏิบัติงานจริงและระดับคุณภาพ</p>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li><i class="fa-solid fa-check text-sage mr-2"></i> ด้านการบริหารจัดการสถานศึกษา (4 ตัวชี้วัด)</li>
+                            <li><i class="fa-solid fa-check text-sage mr-2"></i> ด้านการบริหารจัดการวิชาการ (4 ตัวชี้วัด)</li>
+                            <li><i class="fa-solid fa-check text-sage mr-2"></i> ด้านการบริหารจัดการตนเองและวิชาชีพ (4 ตัวชี้วัด)</li>
+                            <li><i class="fa-solid fa-check text-sage mr-2"></i> ด้านงานอื่นๆ ตามที่ได้รับมอบหมาย (3 ตัวชี้วัด)</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-cream p-6 rounded-2xl border border-sage/30">
+                        <span class="text-xs font-bold px-2.5 py-1 bg-sage text-white rounded-full">ส่วนที่ 2</span>
+                        <h4 class="text-lg font-bold text-charcoal mt-3 mb-2">ข้อตกลงในการพัฒนางานที่เสนอเป็นประเด็นท้าทาย (40 คะแนน)</h4>
+                        <p class="text-sm text-gray-600 mb-4">ประเด็นท้าทายในการพัฒนาคุณภาพผู้เรียน ครู และสถานศึกษา</p>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li><i class="fa-solid fa-check text-terracotta mr-2"></i> วิธีดำเนินการ (20 คะแนน)</li>
+                            <li><i class="fa-solid fa-check text-terracotta mr-2"></i> ผลลัพธ์เชิงปริมาณ (10 คะแนน)</li>
+                            <li><i class="fa-solid fa-check text-terracotta mr-2"></i> ผลลัพธ์เชิงคุณภาพ (10 คะแนน)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-sage/10 p-6 rounded-2xl border border-sage/30">
+                    <h4 class="text-md font-bold text-charcoal mb-3"><i class="fa-solid fa-circle-question text-sage mr-2"></i> เกณฑ์ระดับคะแนนและการตัดสินผลการประเมิน</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                            <span class="font-bold text-terracotta">ระดับ 1</span>
+                            <p class="text-xs text-gray-600 mt-1">ต่ำกว่าระดับที่คาดหวังมาก</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                            <span class="font-bold text-terracotta">ระดับ 2</span>
+                            <p class="text-xs text-gray-600 mt-1">ต่ำกว่าระดับที่คาดหวัง</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                            <span class="font-bold text-sage">ระดับ 3</span>
+                            <p class="text-xs text-gray-600 mt-1">ตามระดับที่คาดหวัง</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                            <span class="font-bold text-sage">ระดับ 4</span>
+                            <p class="text-xs text-gray-600 mt-1">สูงกว่าระดับที่คาดหวัง</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-600">
+                        <strong class="text-charcoal"><i class="fa-solid fa-award text-amber-600 mr-1"></i>เกณฑ์การผ่าน:</strong> คะแนนรวมทั้งหมดจากกรรมการแต่ละท่านต้องไม่ต่ำกว่าร้อยละ 70 (หรือ 70.00 คะแนนขึ้นไป) จึงจะถือว่าผ่านการประเมิน PA ประจำปีงบประมาณนั้นๆ
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: PART 1 EVALUATION (60 MARKS) -->
+        <div id="tab-content-part1" class="tab-content space-y-6 hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-4 border-b border-gray-100">
+                    <div>
+                        <span class="text-xs font-bold px-3 py-1 bg-terracotta text-white rounded-full">ส่วนที่ 1</span>
+                        <h3 class="text-xl font-bold text-charcoal mt-2">ข้อตกลงในการพัฒนางานตามมาตรฐานตำแหน่ง (60 คะแนน)</h3>
+                        <p class="text-sm text-gray-500">ประเมินโดยกรรมการที่กำลังเลือกอยู่ในขณะนี้ คะแนนรวมส่วนนี้คำนวณอัตโนมัติ (เต็ม 60 คะแนน)</p>
+                    </div>
+                    <div class="bg-sage/20 px-4 py-2 rounded-xl text-right">
+                        <span class="text-xs text-gray-600 block">คะแนนรวมส่วนที่ 1 (จาก 60)</span>
+                        <span id="part1ScoreTotal" class="text-2xl font-bold text-terracotta">0.00</span>
+                    </div>
+                </div>
+
+                <div id="part1Container" class="space-y-8">
+                    <!-- Dynamically injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: PART 2 EVALUATION (40 MARKS) -->
+        <div id="tab-content-part2" class="tab-content space-y-6 hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-4 border-b border-gray-100">
+                    <div>
+                        <span class="text-xs font-bold px-3 py-1 bg-sage text-white rounded-full">ส่วนที่ 2</span>
+                        <h3 class="text-xl font-bold text-charcoal mt-2">ข้อตกลงในการพัฒนางานที่เสนอเป็นประเด็นท้าทาย (40 คะแนน)</h3>
+                        <p class="text-sm text-gray-500">ประเด็นท้าทาย: การพัฒนาคุณภาพการบริหารจัดการสถานศึกษาและยกระดับผลสัมฤทธิ์ทางการเรียน</p>
+                    </div>
+                    <div class="bg-sage/20 px-4 py-2 rounded-xl text-right">
+                        <span class="text-xs text-gray-600 block">คะแนนรวมส่วนที่ 2 (จาก 40)</span>
+                        <span id="part2ScoreTotal" class="text-2xl font-bold text-sage-dark">0.00</span>
+                    </div>
+                </div>
+
+                <div id="part2Container" class="space-y-8">
+                    <!-- Dynamically injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: DASHBOARD SUMMARY -->
+        <div id="tab-content-dashboard" class="tab-content space-y-6 hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Summary Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-charcoal mb-4"><i class="fa-solid fa-chart-line text-terracotta mr-2"></i> สรุปผลคะแนนรวม 3 กรรมการ</h3>
+                        <div class="space-y-4">
+                            <div class="p-4 rounded-xl bg-cream border border-sage/20">
+                                <span class="text-xs text-gray-500 block">คะแนนเฉลี่ยรวม (100 คะแนน)</span>
+                                <span id="dashAvgScore" class="text-3xl font-bold text-terracotta">0.00</span>
+                            </div>
+                            <div class="p-4 rounded-xl bg-cream border border-sage/20">
+                                <span class="text-xs text-gray-500 block">ผลการประเมินภาพรวม</span>
+                                <span id="dashStatus" class="text-lg font-bold text-gray-700">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-gray-100 text-xs text-gray-500">
+                        * เกณฑ์ผ่านการประเมิน: คะแนนเฉลี่ยตั้งแต่ 70.00 คะแนนขึ้นไป (ร้อยละ 70)
+                    </div>
+                </div>
+
+                <!-- Chart Container -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:col-span-2">
+                    <h3 class="text-lg font-bold text-charcoal mb-4"><i class="fa-solid fa-chart-column text-sage mr-2"></i> เปรียบเทียบคะแนนรายกรรมการทั้ง 3 ท่าน</h3>
+                    <div class="relative h-72">
+                        <canvas id="evaluatorChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Evaluators Breakdown Table -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <h3 class="text-lg font-bold text-charcoal mb-4"><i class="fa-solid fa-table text-terracotta mr-2"></i> ตารางเปรียบเทียบคะแนนและข้อคิดเห็นของกรรมการ</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-cream text-charcoal border-b border-gray-200 text-sm">
+                                <th class="p-3">กรรมการผู้ประเมิน</th>
+                                <th class="p-3 text-center">ส่วนที่ 1 (60)</th>
+                                <th class="p-3 text-center">ส่วนที่ 2 (40)</th>
+                                <th class="p-3 text-center">รวม (100)</th>
+                                <th class="p-3 text-center">ผลการประเมิน</th>
+                                <th class="p-3">จุดเด่น / ข้อเสนอแนะ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="evaluatorsSummaryTableBody" class="text-sm divide-y divide-gray-100">
+                            <!-- Injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: OFFICIAL REPORT PA 2 -->
+        <div id="tab-content-report" class="tab-content space-y-6 hidden">
+            <div class="flex justify-end gap-3 no-print">
+                <button onclick="window.print()" class="px-5 py-2.5 bg-charcoal hover:bg-black text-cream text-sm font-semibold rounded-xl shadow transition flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> พิมพ์แบบรายงาน / บันทึก PDF
+                </button>
+            </div>
+
+            <!-- Printable Official Form -->
+            <div id="printableArea" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 md:p-12 print-shadow max-w-4xl mx-auto space-y-6 text-charcoal">
+                <!-- Header Form -->
+                <div class="text-center space-y-2 border-b-2 border-charcoal/20 pb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <img src="https://placehold.co/60x60/8A9A86/FFFFFF?text=สพฐ" class="w-14 h-14 object-contain">
+                        <div class="text-center">
+                            <h2 class="text-xl font-bold">แบบประเมินผลการปฏิบัติงานตามข้อตกลงในการพัฒนางาน (PA)</h2>
+                            <p class="text-sm font-semibold text-gray-600">สำหรับข้าราชการครูและบุคลากรทางการศึกษา ตำแหน่งรองผู้อำนวยการสถานศึกษา วิทยฐานะชำนาญการพิเศษ</p>
+                            <p class="text-xs text-gray-500">ประจำปีงบประมาณ พ.ศ. 2569 (รอบการประเมิน 1 ตุลาคม 2568 ถึง 30 กันยายน 2569)</p>
+                        </div>
+                        <img src="https://placehold.co/60x60/C85A32/FFFFFF?text=รร" class="w-14 h-14 object-contain">
+                    </div>
+                </div>
+
+                <!-- Personal Info Box -->
+                <div class="bg-cream p-4 rounded-xl border border-sage/30 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                    <div><strong>ชื่อผู้รับการประเมิน:</strong> นางสาวสุธิมา รณภพรัตนกุล</div>
+                    <div><strong>วิทยฐานะ:</strong> ชำนาญการพิเศษ</div>
+                    <div><strong>สถานศึกษา:</strong> โรงเรียนบ้านทุ่งนาวิทยา</div>
+                    <div><strong>สังกัด:</strong> สำนักงานเขตพื้นที่การศึกษาประถมศึกษาอุทัยธานี เขต 2</div>
+                </div>
+
+                <!-- Scoring Summary Table -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-md text-charcoal border-l-4 border-terracotta pl-2">สรุปผลการประเมินจากกรรมการทั้ง 3 ท่าน</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border border-gray-300 text-sm">
+                            <thead>
+                                <tr class="bg-gray-100 border-b border-gray-300">
+                                    <th class="p-2.5 border-r border-gray-300">กรรมการผู้ประเมิน</th>
+                                    <th class="p-2.5 text-center border-r border-gray-300">ส่วนที่ 1 (60 คะแนน)</th>
+                                    <th class="p-2.5 text-center border-r border-gray-300">ส่วนที่ 2 (40 คะแนน)</th>
+                                    <th class="p-2.5 text-center border-r border-gray-300">รวม 100 คะแนน</th>
+                                    <th class="p-2.5 text-center">ระดับผลการประเมิน</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportTableBody">
+                                <!-- Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Comments & Feedback Summary -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-md text-charcoal border-l-4 border-sage pl-2">ความเห็นและข้อเสนอแนะจากคณะกรรมการ</h4>
+                    <div id="reportCommentsContainer" class="space-y-3">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+
+                <!-- Signatures -->
+                <div class="pt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center text-sm">
+                    <div class="space-y-12">
+                        <p class="font-semibold">ลงชื่อ .......................................................<br>(นายเอกชัย ไชยประยา)<br>ผอ.รร.บ้านทุ่งนาวิทยา<br>กรรมการผู้ประเมินคนที่ 1</p>
+                    </div>
+                    <div class="space-y-12">
+                        <p class="font-semibold">ลงชื่อ .......................................................<br>(นายศราวุฒิ จำรัสภูมิ)<br>ผอ.รร.สมอทองปทีปพลีผลอุปถัมภ์<br>กรรมการผู้ประเมินคนที่ 2</p>
+                    </div>
+                    <div class="space-y-12">
+                        <p class="font-semibold">ลงชื่อ .......................................................<br>(นายชยพล สอนซิว)<br>ผอ.รร.ห้วยคตพิทยาคม<br>กรรมการผู้ประเมินคนที่ 3</p>
+                    </div>
+                </div>
+
+                <div class="pt-8 text-center border-t border-gray-200 mt-8">
+                    <p class="font-semibold">รับทราบผลการประเมิน</p>
+                    <div class="mt-12">
+                        <p>ลงชื่อ .......................................................<br>(นางสาวสุธิมา รณภพรัตนกุล)<br>รองผู้อำนวยการสถานศึกษา ผู้รับการประเมิน<br>วันที่ ....... / ....................... / ............</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-charcoal text-cream text-center py-4 mt-auto no-print text-xs">
+        <p>ระบบประเมิน PA 2 ออนไลน์ สำหรับรองผู้อำนวยการสถานศึกษา โรงเรียนบ้านทุ่งนาวิทยา พ.ศ. 2569</p>
+    </footer>
+
+    <!-- App Logic -->
+    <script>
+        // Data Structure for Part 1 (15 Indicators across 5 Aspects)
+        const part1Indicators = [
+            // ด้านที่ 1: การบริหารจัดการสถานศึกษา (4 ตัวชี้วัด)
+            { aspect: "ด้านที่ 1: การบริหารจัดการสถานศึกษา", id: 1, title: "1.1 การบริหารงานสถานศึกษาให้เป็นไปตามกฎหมาย ระเบียบ ข้อบังคับ นโยบาย และตามหลักการบริหารกิจการบ้านเมืองที่ดี" },
+            { aspect: "ด้านที่ 1: การบริหารจัดการสถานศึกษา", id: 2, title: "1.2 การบริหารจัดการสถานศึกษาด้านงานวิชาการ งานกิจการนักเรียน งานบริหารงานบุคคล และงานงบประมาณ" },
+            { aspect: "ด้านที่ 1: การบริหารจัดการสถานศึกษา", id: 3, title: "1.3 การบริหารจัดการสถานศึกษาเพื่อการประกันคุณภาพการศึกษาและการพัฒนาสถานศึกษาให้บรรลุเป้าหมาย" },
+            { aspect: "ด้านที่ 1: การบริหารจัดการสถานศึกษา", id: 4, title: "1.4 การบริหารจัดการความเสี่ยงและการแก้ไขปัญหาอุปสรรคในการดำเนินงานของสถานศึกษา" },
+
+            // ด้านที่ 2: การบริหารจัดการวิชาการและการพัฒนาคุณภาพการเรียนรู้ (4 ตัวชี้วัด)
+            { aspect: "ด้านที่ 2: การบริหารจัดการวิชาการฯ", id: 5, title: "2.1 การพัฒนาหลักสูตรสถานศึกษาและการจัดกระบวนการเรียนรู้ที่เน้นผู้เรียนเป็นสำคัญ" },
+            { aspect: "ด้านที่ 2: การบริหารจัดการวิชาการฯ", id: 6, title: "2.2 การนิเทศ กำกับ ติดตาม และประเมินผลการจัดการเรียนรู้ของครูในสถานศึกษา" },
+            { aspect: "ด้านที่ 2: การบริหารจัดการวิชาการฯ", id: 7, title: "2.3 การส่งเสริมและสนับสนุนการใช้สื่อนวัตกรรม และเทคโนโลยีดิจิทัลในการจัดการเรียนรู้" },
+            { aspect: "ด้านที่ 2: การบริหารจัดการวิชาการฯ", id: 8, title: "2.4 การวัดและประเมินผลการเรียนรู้ของผู้เรียนและการพัฒนาแหล่งเรียนรู้ในสถานศึกษา" },
+
+            // ด้านที่ 3: การบริหารจัดการตนเองและวิชาชีพ (4 ตัวชี้วัด)
+            { aspect: "ด้านที่ 3: การบริหารจัดการตนเองและวิชาชีพ", id: 9, title: "3.1 การพัฒนาตนเองอย่างเป็นระบบและต่อเนื่องเพื่อเสริมสร้างสมรรถนะในการปฏิบัติงาน" },
+            { aspect: "ด้านที่ 3: การบริหารจัดการตนเองและวิชาชีพ", id: 10, title: "3.2 การมีวินัย คุณธรรม จริยธรรม และจรรยาบรรณวิชาชีพ" },
+            { aspect: "ด้านที่ 3: การบริหารจัดการตนเองและวิชาชีพ", id: 11, title: "3.3 การเป็นผู้นำทางวิชาการและการสร้างเครือข่ายความร่วมมือในการพัฒนาการศึกษา" },
+            { aspect: "ด้านที่ 3: การบริหารจัดการตนเองและวิชาชีพ", id: 12, title: "3.4 การสื่อสารและการสร้างความสัมพันธ์อันดีกับชุมชนและผู้มีส่วนเกี่ยวข้อง" },
+
+            // ด้านที่ 4: งานอื่นๆ ตามที่ได้รับมอบหมาย (3 ตัวชี้วัด)
+            { aspect: "ด้านที่ 4: งานอื่นๆ ตามที่ได้รับมอบหมาย", id: 13, title: "4.1 การปฏิบัติงานตามนโยบายเร่งด่วนของกระทรวงศึกษาธิการและต้นสังกัด" },
+            { aspect: "ด้านที่ 4: งานอื่นๆ ตามที่ได้รับมอบหมาย", id: 14, title: "4.2 การขับเคลื่อนโครงการพิเศษและงานนโยบายสำคัญของสถานศึกษา" },
+            { aspect: "ด้านที่ 4: งานอื่นๆ ตามที่ได้รับมอบหมาย", id: 15, title: "4.3 การปฏิบัติภารกิจอื่นๆ เพื่อเสริมสร้างภาพลักษณ์และความเข้มแข็งของสถานศึกษา" }
+        ];
+
+        // Data Structure for Part 2 (Challenge issues - 40 marks total)
+        // 1. วิธีดำเนินการ (20 คะแนน), 2. ผลลัพธ์เชิงปริมาณ (10 คะแนน), 3. ผลลัพธ์เชิงคุณภาพ (10 คะแนน)
+        const part2Indicators = [
+            { id: 101, title: "2.1 วิธีดำเนินการ (Methodology): ออกแบบและขับเคลื่อนการดำเนินงานตามประเด็นท้าทายอย่างเป็นระบบ", maxRawScore: 20 },
+            { id: 102, title: "2.2 ผลลัพธ์เชิงปริมาณ (Quantitative Results): ผู้เรียน ครู และสถานศึกษามีผลสัมฤทธิ์ตามเป้าหมายที่กำหนด", maxRawScore: 10 },
+            { id: 103, title: "2.3 ผลลัพธ์เชิงคุณภาพ (Qualitative Results): เกิดการเปลี่ยนแปลงเชิงบวก มีนวัตกรรมและการยกระดับคุณภาพการบริหารจัดการ", maxRawScore: 10 }
+        ];
+
+        let currentEvaluator = 1;
+        let evaluationData = loadSavedData();
+        let evaluatorChartInstance = null;
+
+        function getDefaultEvaluatorData() {
+            let part1 = {};
+            part1Indicators.forEach(ind => part1[ind.id] = { level: 3, comment: "" });
+            
+            let part2 = {};
+            part2Indicators.forEach(ind => part2[ind.id] = { level: 3, comment: "" });
+
+            return {
+                part1: part1,
+                part2: part2,
+                generalComment: "ปฏิบัติงานด้วยความตั้งใจ มีวิสัยทัศน์ และมุ่งมั่นพัฒนาคุณภาพการศึกษาของสถานศึกษาอย่างต่อเนื่อง"
+            };
+        }
+
+        function loadSavedData() {
+            const saved = localStorage.getItem('pa2_eval_suthima_2569');
+            if (saved) {
+                try {
+                    return JSON.parse(saved);
+                } catch (e) {
+                    console.error("Error parsing saved data", e);
+                }
+            }
+            // Default initial structure for 3 evaluators
+            return {
+                1: getDefaultEvaluatorData(),
+                2: getDefaultEvaluatorData(),
+                3: getDefaultEvaluatorData()
+            };
+        }
+
+        function saveAllData() {
+            localStorage.setItem('pa2_eval_suthima_2569', JSON.stringify(evaluationData));
+            alertCustom("บันทึกข้อมูลสำเร็จเรียบร้อยแล้ว!");
+            updateAllCalculations();
+        }
+
+        function alertCustom(msg) {
+            // Friendly custom notification modal or alert
+            alert(msg);
+        }
+
+        function resetData() {
+            if (confirm("คุณต้องการรีเซ็ตข้อมูลการประเมินทั้งหมดของกรรมการท่านนี้หรือไม่?")) {
+                evaluationData[currentEvaluator] = getDefaultEvaluatorData();
+                renderAllForms();
+                saveAllData();
+            }
+        }
+
+        function switchEvaluator(evalId) {
+            currentEvaluator = parseInt(evalId);
+            renderAllForms();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('text-terracotta', 'border-terracotta');
+                el.classList.add('text-gray-500', 'border-transparent');
+            });
+
+            document.getElementById(`tab-content-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            activeBtn.classList.remove('text-gray-500', 'border-transparent');
+            activeBtn.classList.add('text-terracotta', 'border-terracotta');
+
+            if (tabId === 'dashboard') {
+                updateDashboard();
+            } else if (tabId === 'report') {
+                updateReportView();
+            }
+        }
+
+        // Render evaluation forms
+        function renderAllForms() {
+            renderPart1Form();
+            renderPart2Form();
+            updateAllCalculations();
+        }
+
+        function renderPart1Form() {
+            const container = document.getElementById('part1Container');
+            let html = '';
+            let currentAspect = '';
+
+            part1Indicators.forEach(ind => {
+                if (ind.aspect !== currentAspect) {
+                    currentAspect = ind.aspect;
+                    html += `<div class="bg-sage/10 p-3 rounded-xl font-bold text-charcoal border-l-4 border-sage mt-6 mb-3">${currentAspect}</div>`;
+                }
+
+                const currentVal = evaluationData[currentEvaluator].part1[ind.id]?.level || 3;
+                const currentComment = evaluationData[currentEvaluator].part1[ind.id]?.comment || '';
+
+                html += `
+                    <div class="p-4 rounded-xl border border-gray-200 bg-cream/50 space-y-3">
+                        <div class="font-medium text-sm text-charcoal">${ind.title}</div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            <label class="flex items-center space-x-2 p-2 rounded-lg border ${currentVal == 1 ? 'border-terracotta bg-terracotta/10' : 'border-gray-200 bg-white'} cursor-pointer text-xs">
+                                <input type="radio" name="p1_${ind.id}" value="1" ${currentVal == 1 ? 'checked' : ''} onchange="updateScore(1, ${ind.id}, 1, this.value)">
+                                <span>ระดับ 1 (ต่ำมาก)</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-2 rounded-lg border ${currentVal == 2 ? 'border-amber-500 bg-amber-50' : 'border-gray-200 bg-white'} cursor-pointer text-xs">
+                                <input type="radio" name="p1_${ind.id}" value="2" ${currentVal == 2 ? 'checked' : ''} onchange="updateScore(1, ${ind.id}, 2, this.value)">
+                                <span>ระดับ 2 (ต่ำกว่า)</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-2 rounded-lg border ${currentVal == 3 ? 'border-sage bg-sage/10' : 'border-gray-200 bg-white'} cursor-pointer text-xs">
+                                <input type="radio" name="p1_${ind.id}" value="3" ${currentVal == 3 ? 'checked' : ''} onchange="updateScore(1, ${ind.id}, 3, this.value)">
+                                <span>ระดับ 3 (ตามเกณฑ์)</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-2 rounded-lg border ${currentVal == 4 ? 'border-terracotta bg-terracotta/10' : 'border-gray-200 bg-white'} cursor-pointer text-xs">
+                                <input type="radio" name="p1_${ind.id}" value="4" ${currentVal == 4 ? 'checked' : ''} onchange="updateScore(1, ${ind.id}, 4, this.value)">
+                                <span>ระดับ 4 (สูงกว่า)</span>
+                            </label>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderPart2Form() {
+            const container = document.getElementById('part2Container');
+            let html = '';
+
+            part2Indicators.forEach(ind => {
+                const currentVal = evaluationData[currentEvaluator].part2[ind.id]?.level || 3;
+
+                html += `
+                    <div class="p-5 rounded-xl border border-gray-200 bg-cream/50 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-sm text-charcoal">${ind.title}</span>
+                            <span class="text-xs bg-sage/20 text-sage-dark font-semibold px-2.5 py-1 rounded-full">น้ำหนักคะแนนเต็ม ${ind.maxRawScore} คะแนน</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            <label class="flex items-center space-x-2 p-2 rounded-lg border ${currentVal == 1 ? 'border-terracotta bg-terracotta/10' : 'border-gray-200 bg-white'} cursor-pointer text-xs">
+                                <input type="radio" name="p2_${ind.id}" value="1" ${currentVal == 1 ? 'checked' : ''} onchange="updateScore(2, ${ind.id}, 1, this.value)">
+                                <span>ระดับ 1 (ต่ำมาก)</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-2 rounded-lg border ${currentVal == 2 ? 'border-amber-500 bg-amber-50' : 'border-gray-200 bg-white'} cursor-pointer text-xs">
+                                <input type="radio" name="p2_${ind.id}" value="2" ${currentVal == 2 ? 'checked' : ''} onchange="updateScore(2, ${ind.id}, 2, this.value)">
+                                <span>ระดับ 2 (ต่ำกว่า)</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-2 rounded-lg border ${currentVal == 3 ? 'border-sage bg-sage/10' : 'border-gray-200 bg-white'} cursor-pointer text-xs">
+                                <input type="radio" name="p2_${ind.id}" value="3" ${currentVal == 3 ? 'checked' : ''} onchange="updateScore(2, ${ind.id}, 3, this.value)">
+                                <span>ระดับ 3 (ตามเกณฑ์)</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-2 rounded-lg border ${currentVal == 4 ? 'border-terracotta bg-terracotta/10' : 'border-gray-200 bg-white'} cursor-pointer text-xs">
+                                <input type="radio" name="p2_${ind.id}" value="4" ${currentVal == 4 ? 'checked' : ''} onchange="updateScore(2, ${ind.id}, 4, this.value)">
+                                <span>ระดับ 4 (สูงกว่า)</span>
+                            </label>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // General feedback textarea
+            const generalComment = evaluationData[currentEvaluator].generalComment || '';
+            html += `
+                <div class="p-5 rounded-xl border border-gray-200 bg-cream/50 space-y-2 mt-6">
+                    <label class="font-bold text-sm text-charcoal block">จุดเด่น / ข้อเสนอแนะเพิ่มเติมจากกรรมการ</label>
+                    <textarea rows="3" oninput="updateGeneralComment(this.value)" class="w-full p-3 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-terracotta focus:outline-none">${generalComment}</textarea>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function updateScore(part, id, level, val) {
+            if (part === 1) {
+                evaluationData[currentEvaluator].part1[id].level = parseInt(val);
+            } else {
+                evaluationData[currentEvaluator].part2[id].level = parseInt(val);
+            }
+            updateAllCalculations();
+            // Auto save locally
+            localStorage.setItem('pa2_eval_suthima_2569', JSON.stringify(evaluationData));
+        }
+
+        function updateGeneralComment(val) {
+            evaluationData[currentEvaluator].generalComment = val;
+            localStorage.setItem('pa2_eval_suthima_2569', JSON.stringify(evaluationData));
+        }
+
+        // Calculation Logic:
+        // Part 1: 15 indicators. Each level 1-4. Max score 60.
+        // Formula: (Sum of levels / (15 * 4)) * 60 -> which simplifies to: (Sum of levels * 60) / 60 = Sum of levels! Wait!
+        // Let's check: 15 indicators * max level 4 = 60 raw points. If each level 1-4 equals 1-4 points, max sum is 15 * 4 = 60 points! Perfect! Each indicator score contributes directly (Level 1=1, 2=2, 3=3, 4=4). Max sum = 60.
+        // Part 2: 3 indicators with max raw scores 20, 10, 10.
+        // Level 1=1/4 of max, Level 2=2/4, Level 3=3/4, Level 4=4/4.
+        // Indicator 2.1 (max 20): Level * 5 (Level 4 -> 20)
+        // Indicator 2.2 (max 10): Level * 2.5 (Level 4 -> 10)
+        // Indicator 2.3 (max 10): Level * 2.5 (Level 4 -> 10)
+        // Total Part 2 max = 40.
+        function calculateScores(evalId) {
+            const ev = evaluationData[evalId];
+            let p1Sum = 0;
+            part1Indicators.forEach(ind => {
+                p1Sum += (ev.part1[ind.id]?.level || 3);
+            });
+
+            let p2Sum = 0;
+            // 2.1 (max 20) -> level * 5
+            p2Sum += (ev.part2[101]?.level || 3) * 5;
+            // 2.2 (max 10) -> level * 2.5
+            p2Sum += (ev.part2[102]?.level || 3) * 2.5;
+            // 2.3 (max 10) -> level * 2.5
+            p2Sum += (ev.part2[103]?.level || 3) * 2.5;
+
+            const total = p1Sum + p2Sum;
+            return { p1: p1Sum, p2: p2Sum, total: total };
+        }
+
+        function updateAllCalculations() {
+            const scores = calculateScores(currentEvaluator);
+            document.getElementById('part1ScoreTotal').innerText = scores.p1.toFixed(2);
+            document.getElementById('part2ScoreTotal').innerText = scores.p2.toFixed(2);
+        }
+
+        // Dashboard updates
+        const evaluatorNames = {
+            1: "1. นายเอกชัย ไชยประยา",
+            2: "2. นายศราวุฒิ จำรัสภูมิ",
+            3: "3. นายชยพล สอนซิว"
+        };
+
+        function updateDashboard() {
+            let totalAll = 0;
+            let tableHtml = '';
+
+            for (let i = 1; i <= 3; i++) {
+                const sc = calculateScores(i);
+                totalAll += sc.total;
+                const isPass = sc.total >= 70;
+                tableHtml += `
+                    <tr class="border-b border-gray-100 hover:bg-cream/50">
+                        <td class="p-3 font-medium text-charcoal">${evaluatorNames[i]}</td>
+                        <td class="p-3 text-center">${sc.p1.toFixed(2)}</td>
+                        <td class="p-3 text-center">${sc.p2.toFixed(2)}</td>
+                        <td class="p-3 text-center font-bold text-terracotta">${sc.total.toFixed(2)}</td>
+                        <td class="p-3 text-center">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${isPass ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${isPass ? 'ผ่านเกณฑ์ (>=70)' : 'ไม่ผ่านเกณฑ์'}
+                            </span>
+                        </td>
+                        <td class="p-3 text-xs text-gray-600 truncate max-w-xs">${evaluationData[i].generalComment || '-'}</td>
+                    </tr>
+                `;
+            }
+
+            const avgTotal = totalAll / 3;
+            document.getElementById('dashAvgScore').innerText = avgTotal.toFixed(2);
+            const overallPass = avgTotal >= 70;
+            const statusEl = document.getElementById('dashStatus');
+            statusEl.innerText = overallPass ? "ผ่านเกณฑ์การประเมิน PA" : "ไม่ผ่านเกณฑ์การประเมิน PA";
+            statusEl.className = `text-lg font-bold ${overallPass ? 'text-green-600' : 'text-red-600'}`;
+
+            document.getElementById('evaluatorsSummaryTableBody').innerHTML = tableHtml;
+
+            // Render Chart.js
+            const ctx = document.getElementById('evaluatorChart').getContext('2d');
+            const s1 = calculateScores(1);
+            const s2 = calculateScores(2);
+            const s3 = calculateScores(3);
+
+            if (evaluatorChartInstance) {
+                evaluatorChartInstance.destroy();
+            }
+
+            evaluatorChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['กรรมการที่ 1 (ผอ.เอกชัย)', 'กรรมการที่ 2 (ผอ.ศราวุฒิ)', 'กรรมการที่ 3 (ผอ.ชยพล)'],
+                    datasets: [
+                        {
+                            label: 'ส่วนที่ 1 (60)',
+                            data: [s1.p1, s2.p1, s3.p1],
+                            backgroundColor: '#C85A32',
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'ส่วนที่ 2 (40)',
+                            data: [s1.p2, s2.p2, s3.p2],
+                            backgroundColor: '#8A9A86',
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        // Report View updates
+        function updateReportView() {
+            let tableHtml = '';
+            let commentsHtml = '';
+
+            for (let i = 1; i <= 3; i++) {
+                const sc = calculateScores(i);
+                const isPass = sc.total >= 70;
+
+                tableHtml += `
+                    <tr class="border-b border-gray-300">
+                        <td class="p-2.5 border-r border-gray-300 font-medium">${evaluatorNames[i]}</td>
+                        <td class="p-2.5 text-center border-r border-gray-300">${sc.p1.toFixed(2)}</td>
+                        <td class="p-2.5 text-center border-r border-gray-300">${sc.p2.toFixed(2)}</td>
+                        <td class="p-2.5 text-center border-r border-gray-300 font-bold">${sc.total.toFixed(2)}</td>
+                        <td class="p-2.5 text-center font-semibold ${isPass ? 'text-green-700' : 'text-red-700'}">${isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
+                    </tr>
+                `;
+
+                commentsHtml += `
+                    <div class="p-3 bg-gray-50 rounded-lg border border-gray-200 text-xs space-y-1">
+                        <span class="font-bold text-charcoal">${evaluatorNames[i]}:</span>
+                        <p class="text-gray-700">${evaluationData[i].generalComment || 'ไม่มีข้อเสนอแนะเพิ่มเติม'}</p>
+                    </div>
+                `;
+            }
+
+            document.getElementById('reportTableBody').innerHTML = tableHtml;
+            document.getElementById('reportCommentsContainer').innerHTML = commentsHtml;
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            renderAllForms();
+        };
+    </script>
+</body>
+</html>
